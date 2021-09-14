@@ -1,7 +1,9 @@
 import { RouteInfo } from '../types';
 import View from './view';
+
 export default class Router {
   defaultRoute: RouteInfo | null;
+
   routeTable: RouteInfo[];
 
   constructor() {
@@ -10,14 +12,14 @@ export default class Router {
     this.routeTable = [];
   }
 
-  go = (): void => {
+  go() {
     this.route();
   }
 
   setDefaultPage(page: View, params: RegExp | null = null): void {
     this.defaultRoute = {
-      path: '', 
-      page, 
+      path: '',
+      page,
       params,
     };
   }
@@ -27,26 +29,24 @@ export default class Router {
   }
 
   private route() {
-    const routePath: string = location.hash;
-    
+    const routePath: string = window.location.hash;
+
     if (routePath === '' && this.defaultRoute) {
       this.defaultRoute.page.render();
       return;
     }
+    this.routeTable.forEach((routeInfo) => {
+      if (!routePath.includes(routeInfo.path)) return;
 
-    for(const routeInfo of this.routeTable) {
-      if (routePath.indexOf(routeInfo.path) >= 0) {        
-        if (routeInfo.params) {
-          const parseParams = routePath.match(routeInfo.params);
-
-          if (parseParams) {
-            routeInfo.page.render.apply(null, [parseParams[1]]);
-          }          
-        } else {
-          routeInfo.page.render();
-        }       
+      if (!routeInfo.params) {
+        routeInfo.page.render();
         return;
-      }  
-    }
+      }
+
+      const parseParams = routePath.match(routeInfo.params);
+      if (parseParams) {
+        routeInfo.page.render.apply(null, [parseParams[1]]);
+      }
+    });
   }
 }

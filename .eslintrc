@@ -10,5 +10,15 @@
     "sourceType": "module"
   },
   "plugins": ["@typescript-eslint"],
-  "rules": {}
+  "rules": {
+    "import/no-unresolved": "off",
+    "import/extensions": "off",
+    "no-unused-vars": "warn",
+    "camelcase": "off",
+    "no-param-reassign": "warn",
+    "indent": "off",
+    "max-classes-per-file": "off",
+    "no-useless-constructor": "off",
+    "object-curly-newline": "off"
+  }
 }

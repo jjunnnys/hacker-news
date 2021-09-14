@@ -2,6 +2,7 @@ import { NewsFeed, NewsDetail } from '../types';
 
 export default class Api {
   ajax: XMLHttpRequest;
+
   url: string;
 
   constructor(url: string) {

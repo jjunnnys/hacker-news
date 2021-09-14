@@ -30,6 +30,7 @@ const template = `
 
 export default class NewsFeedView extends View {
   private api: NewsFeedApi;
+
   private feeds: NewsFeed[];
 
   constructor(containerId: string) {
@@ -38,23 +39,28 @@ export default class NewsFeedView extends View {
     this.feeds = window.store.feeds;
     this.api = new NewsFeedApi(NEWS_URL);
 
-    if (window.store.feeds.length === 0) {
-      this.feeds = window.store.feeds = this.api.getData();
+    console.log({ feeds: window.store.feeds });
+    if (this.feeds.length === 0) {
+      window.store.feeds = this.api.getData();
+      this.feeds = this.api.getData();
       this.makeFeeds();
-    }  
+    }
   }
 
-  render = (page: string = '1'): void => {
+  render(page: string = '1') {
     window.store.currentPage = Number(page);
-    
-    for(let i = (window.store.currentPage - 1) * 10; i < window.store.currentPage * 10; i++) {
+
+    // eslint-disable-next-line no-plusplus
+    for (let i = (window.store.currentPage - 1) * 10; i < window.store.currentPage * 10; i++) {
       const { id, title, comments_count, user, points, time_ago, read } = this.feeds[i];
 
       this.addHtml(`
-        <div class="p-6 ${read ? 'bg-red-500' : 'bg-white'} mt-6 rounded-lg shadow-md transition-colors duration-500 hover:bg-green-100">
+        <div class="p-6 ${
+          read ? 'bg-red-500' : 'bg-white'
+        } mt-6 rounded-lg shadow-md transition-colors duration-500 hover:bg-green-100">
           <div class="flex">
             <div class="flex-auto">
-              <a href="#/show/${id}">${title}</a>  
+              <a href="#/show/${id}">${title}</a>
             </div>
             <div class="text-center text-sm">
               <div class="w-10 text-white bg-green-300 rounded-lg px-0 py-2">${comments_count}</div>
@@ -65,22 +71,25 @@ export default class NewsFeedView extends View {
               <div><i class="fas fa-user mr-1"></i>${user}</div>
               <div><i class="fas fa-heart mr-1"></i>${points}</div>
               <div><i class="far fa-clock mr-1"></i>${time_ago}</div>
-            </div>  
+            </div>
           </div>
-        </div>    
+        </div>
       `);
-    }  
+    }
 
     this.setTemplateData('news_feed', this.getHtml());
-    this.setTemplateData('prev_page', String(window.store.currentPage > 1 ? window.store.currentPage - 1 : 1));
+    this.setTemplateData(
+      'prev_page',
+      String(window.store.currentPage > 1 ? window.store.currentPage - 1 : 1),
+    );
     this.setTemplateData('next_page', String(window.store.currentPage + 1));
-  
+
     this.updateView();
   }
 
   private makeFeeds(): void {
-    for (let i = 0; i < this.feeds.length; i++) {
-      this.feeds[i].read = false;
-    }
+    this.feeds.forEach((feed) => {
+      feed.read = false;
+    });
   }
 }

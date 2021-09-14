@@ -1,10 +1,5 @@
 import View from '../core/view';
 
-export interface Store {
-  feeds: NewsFeed[];
-  currentPage: number;
-}
-
 export interface News {
   readonly id: number;
   readonly time_ago: string;
@@ -20,17 +15,22 @@ export interface NewsFeed extends News {
   read?: boolean;
 }
 
-export interface NewsDetail extends News {
-  readonly comments: NewsComment[];
-}
-
 export interface NewsComment extends News {
   readonly comments: NewsComment[];
   readonly level: number;
+}
+
+export interface NewsDetail extends News {
+  readonly comments: NewsComment[];
 }
 
 export interface RouteInfo {
   path: string;
   page: View;
   params: RegExp | null;
+}
+
+export interface Store {
+  feeds: NewsFeed[];
+  currentPage: number;
 }

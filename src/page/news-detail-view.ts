@@ -32,18 +32,17 @@ const template = `
 
 export default class NewsDetailView extends View {
   constructor(containerId: string) {
-    super(containerId, template);  
+    super(containerId, template);
   }
 
   render = (id: string): void => {
     const api = new NewsDetailApi(CONTENT_URL.replace('@id', id));
 
-    for(let i=0; i < window.store.feeds.length; i++) {
-      if (window.store.feeds[i].id === Number(id)) {
-        window.store.feeds[i].read = true;
-        break;
+    window.store.feeds.forEach((feed) => {
+      if (feed.id === Number(id)) {
+        feed.read = true;
       }
-    }
+    });
 
     const newsDetail: NewsDetail = api.getData();
 
@@ -53,12 +52,10 @@ export default class NewsDetailView extends View {
     this.setTemplateData('comments', this.makeComment(newsDetail.comments));
 
     this.updateView();
-  }
+  };
 
   private makeComment(comments: NewsComment[]): string {
-    for(let i = 0; i < comments.length; i++) {
-      const comment: NewsComment = comments[i];
-
+    comments.forEach((comment) => {
       this.addHtml(`
         <div style="padding-left: ${comment.level * 40}px;" class="mt-4">
           <div class="text-gray-400">
@@ -68,12 +65,12 @@ export default class NewsDetailView extends View {
           <p class="text-gray-700">${comment.content}</p>
         </div>      
       `);
-  
+
       if (comment.comments.length > 0) {
         this.addHtml(this.makeComment(comment.comments));
       }
-    }
-  
+    });
+
     return this.getHtml();
   }
 }
