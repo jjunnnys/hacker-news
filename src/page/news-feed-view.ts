@@ -41,17 +41,15 @@ export default class NewsFeedView extends View {
     this.render.bind(this);
   }
 
-  render(page: string = '1') {
+  async render(page: string = '1'): Promise<void> {
     this.store.currentPage = Number(page);
+    const data = await this.api.getData();
     // render 메서드는 router에서 호출하기 때문에 api를 render에서 실행
     if (!this.store.hasFeeds) {
-      this.api.getData((data) => {
-        this.store.setFeeds(data);
-        this.renderView(); // 데이터가 없어도 그려지고
-      });
+      this.store.setFeeds(data);
     }
 
-    this.renderView(); // 데이터가 있어도 그려지고
+    this.renderView();
   }
 
   renderView() {
