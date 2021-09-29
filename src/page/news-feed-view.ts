@@ -37,15 +37,24 @@ export default class NewsFeedView extends View {
 
     this.store = store;
     this.api = new NewsFeedApi(NEWS_URL);
-
-    if (!this.store.hasFeeds) {
-      this.store.setFeeds(this.api.getData());
-    }
+    this.renderView.bind(this);
+    this.render.bind(this);
   }
 
   render(page: string = '1') {
     this.store.currentPage = Number(page);
+    // render 메서드는 router에서 호출하기 때문에 api를 render에서 실행
+    if (!this.store.hasFeeds) {
+      this.api.getData((data) => {
+        this.store.setFeeds(data);
+        this.renderView(); // 데이터가 없어도 그려지고
+      });
+    }
 
+    this.renderView(); // 데이터가 있어도 그려지고
+  }
+
+  renderView() {
     // eslint-disable-next-line no-plusplus
     for (let i = (this.store.currentPage - 1) * 10; i < this.store.currentPage * 10; i++) {
       const { id, title, comments_count, user, points, time_ago, read } = this.store.getFeed(i);
